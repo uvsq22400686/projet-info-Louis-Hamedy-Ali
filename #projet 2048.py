@@ -1,4 +1,4 @@
-#projet 2048
+#projet 2048 info
 import tkinter as tk
 import random
 racine = tk.Tk() # Création de la fenêtre racine
