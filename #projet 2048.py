@@ -1,19 +1,43 @@
-#projet 2048
 import tkinter as tk
 import random
-racine = tk.Tk() # Création de la fenêtre racine
-racine.title("2048")
 
-case_taille=100
-canvas_grid=4
-marge=4
-background_color="beige"
-case_vide_color="gray"
-couleur_block={2: "#EEE4DA", 4: "#EDE0C8", 8: "#F2B179", 16: "#F59563",
+# Paramètres du jeu
+case_taille = 100
+canvas_grid = 4
+marge = 4
+background_color = "beige"
+case_vide_color = "gray"
+couleur_block = {
+    2: "#EEE4DA", 4: "#EDE0C8", 8: "#F2B179", 16: "#F59563",
     32: "#F67C5F", 64: "#F65E3B", 128: "#EDCF72", 256: "#EDCC61",
-    512: "#EDC850", 1024: "#EDC53F", 2048: "#EDC22E"}
+    512: "#EDC850", 1024: "#EDC53F", 2048: "#EDC22E"
+}
 couleur_texte = {2: "#776E65", 4: "#776E65", 8: "#F9F6F2"}
-        
+
+
+class MenuPrincipal:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("2048 - Menu")
+        self.root.geometry("300x200")
+        self.root.configure(bg="beige")
+
+        titre = tk.Label(self.root, text="2048", font=("Arial", 32, "bold"), bg="beige")
+        titre.pack(pady=20)
+
+        jouer_btn = tk.Button(self.root, text="Jouer", font=("Arial", 16), command=self.lancer_jeu, bg="#8BC34A", fg="white")
+        jouer_btn.pack(pady=10)
+
+        quitter_btn = tk.Button(self.root, text="Quitter", font=("Arial", 12), command=self.root.destroy, bg="red", fg="white")
+        quitter_btn.pack(pady=5)
+
+        self.root.mainloop()
+
+    def lancer_jeu(self):
+        self.root.destroy()  # Ferme le menu
+        Game2048()  # Lance le jeu
+
+
 class Game2048:
     def __init__(self):
         self.racine = tk.Tk()
@@ -28,32 +52,27 @@ class Game2048:
         self.racine.mainloop()
 
     def init_ui(self):
-    
         self.canvas = tk.Canvas(
             self.racine,
             width=canvas_grid * case_taille,
             height=canvas_grid * case_taille,
             bg=background_color
-    )
+        )
         self.canvas.pack()
 
-    # Frame pour les boutons
         bouton_frame = tk.Frame(self.racine)
         bouton_frame.pack(pady=10)
 
-    # Bouton Quitter
         quitter_btn = tk.Button(bouton_frame, text="Quitter", command=self.racine.destroy, bg="red", fg="white")
-        quitter_btn.pack()
+        quitter_btn.pack(side=tk.LEFT, padx=5)
 
     def cree_block(self):
-        """ Ajoute un nouveau block (2 ou 4) à un emplacement vide """
         case_vide = [(i, j) for i in range(canvas_grid) for j in range(canvas_grid) if self.grid[i][j] == 0]
         if case_vide:
             i, j = random.choice(case_vide)
             self.grid[i][j] = 2 if random.random() < 0.9 else 4
 
     def interface(self):
-        """ Met à jour l'affichage du plateau """
         self.canvas.delete("all")
         for i in range(canvas_grid):
             for j in range(canvas_grid):
@@ -67,7 +86,6 @@ class Game2048:
                     self.canvas.create_text((x0 + x1) / 2, (y0 + y1) / 2, text=str(value), font=("Arial", 24, "bold"), fill=texte_color)
 
     def touches(self, event):
-        """ Gère les déplacements selon la touche pressée """
         if event.keysym in ("Up", "Down", "Left", "Right"):
             moved = self.deplacement(event.keysym)
             if moved:
@@ -77,7 +95,6 @@ class Game2048:
                     self.game_over()
 
     def deplacement(self, direction):
-        """ Déplace et fusionne les blocks selon la direction """
         def compress(row):
             new_row = [v for v in row if v != 0]
             new_row += [0] * (canvas_grid - len(new_row))
@@ -115,7 +132,6 @@ class Game2048:
         return moved
 
     def check_game_over(self):
-        """ Vérifie si le jeu est terminé """
         for row in self.grid:
             if 0 in row:
                 return False
@@ -130,7 +146,6 @@ class Game2048:
         return True
 
     def game_over(self):
-        """ Affiche un message de fin de partie """
         self.canvas.create_text(
             canvas_grid * case_taille / 2,
             canvas_grid * case_taille / 2,
@@ -139,6 +154,6 @@ class Game2048:
             fill="red"
         )
 
+
 if __name__ == "__main__":
-    Game2048()
-#racine.mainloop()
+    MenuPrincipal()
