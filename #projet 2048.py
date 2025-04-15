@@ -28,9 +28,22 @@ class Game2048:
         self.racine.mainloop()
 
     def init_ui(self):
-        """ Initialise l'interface graphique """
-        self.canvas = tk.Canvas(self.racine, width=canvas_grid * case_taille, height=canvas_grid * case_taille, bg=background_color)
+    
+        self.canvas = tk.Canvas(
+            self.racine,
+            width=canvas_grid * case_taille,
+            height=canvas_grid * case_taille,
+            bg=background_color
+    )
         self.canvas.pack()
+
+    # Frame pour les boutons
+        bouton_frame = tk.Frame(self.racine)
+        bouton_frame.pack(pady=10)
+
+    # Bouton Quitter
+        quitter_btn = tk.Button(bouton_frame, text="Quitter", command=self.racine.destroy, bg="red", fg="white")
+        quitter_btn.pack()
 
     def cree_block(self):
         """ Ajoute un nouveau block (2 ou 4) à un emplacement vide """
