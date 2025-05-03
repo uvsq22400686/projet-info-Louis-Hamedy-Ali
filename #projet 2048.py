@@ -1,5 +1,6 @@
 import tkinter as tk
 import random
+import json
 
 # Paramètres du jeu
 case_taille = 100
@@ -49,6 +50,7 @@ class Game2048:
         self.cree_block()
         self.racine.bind("<Key>", self.touches)
         self.interface()
+        self.charger_progression()        # tente de charger une sauvegarde
         self.racine.mainloop()
 
     def init_ui(self):
@@ -65,6 +67,10 @@ class Game2048:
 
         quitter_btn = tk.Button(bouton_frame, text="Quitter", command=self.racine.destroy, bg="red", fg="white")
         quitter_btn.pack(side=tk.LEFT, padx=5)
+
+        # Bouton Sauvegarder
+         sauvegarder_btn = tk.Button(bouton_frame, text="Sauvegarder", command=self.sauvegarder, bg="#2196F3", fg="white")
+         sauvegarder_btn.pack(side=tk.LEFT, padx=5)
 
     def cree_block(self):
         case_vide = [(i, j) for i in range(canvas_grid) for j in range(canvas_grid) if self.grid[i][j] == 0]
@@ -130,6 +136,28 @@ class Game2048:
             self.grid = [list(x) for x in zip(*self.grid)]
 
         return moved
+        
+    def sauvegarder(self):
+    """Sauvegarde la grille dans un fichier JSON"""
+        try:
+            with open("sauvegarde.json", "w") as f:
+                json.dump(self.grid, f)
+                print("Grille sauvegardée.")
+        except Exception as e:
+            print(f"Erreur de la sauvegarde : {e}")
+
+    def charger_progression(self):
+    """Charge la grille sauvegardée, ou  initialise une nouvelle grille"""
+        try:
+            with open("sauvegarde.json", "r") as f:
+                self.grid = json.load(f)
+                print("Grille chargée")
+       except FileNotFoundError:
+           print("Sauvegarde introuvable. Nouvelle partie lancée.")
+           self.grid = [[0] * canvas_grid for _ in range(canvas_grid)]
+           self.cree_block()
+           self.cree_block()
+
 
     def check_game_over(self):
         for row in self.grid:
