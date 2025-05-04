@@ -69,6 +69,9 @@ class Game2048:
         sauvegarder_btn = tk.Button(bouton_frame, text="Sauvegarder", command=self.sauvegarder, bg="#2196F3", fg="white")
         sauvegarder_btn.pack(side=tk.LEFT, padx=5)
 
+        nouvelle_partie_btn = tk.Button(bouton_frame, text="Nouvelle Partie", command=self.nouvelle_partie, bg="#FFC107", fg="black")
+        nouvelle_partie_btn.pack(side=tk.LEFT, padx=5)
+
     def cree_block(self): # Ajoute un nouveau block (2 ou 4) à un emplacement vide
         case_vide = [(i, j) for i in range(canvas_grid) for j in range(canvas_grid) if self.grid[i][j] == 0]
         if case_vide:
@@ -154,6 +157,12 @@ class Game2048:
             self.grid = [[0] * canvas_grid for _ in range(canvas_grid)]
             self.cree_block()
             self.cree_block()
+    
+    def nouvelle_partie(self):
+        self.grid = [[0] * canvas_grid for _ in range(canvas_grid)]
+        self.cree_block()
+        self.cree_block()
+        self.interface()
 
     def check_game_over(self): # Vérifie si le jeu est terminé
         for row in self.grid:
