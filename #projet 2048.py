@@ -35,8 +35,8 @@ class MenuPrincipal:
         self.root.mainloop()
 
     def lancer_jeu(self):
-        self.root.destroy()  # Ferme le menu
-        Game2048()  # Lance le jeu
+        self.root.destroy() # Ferme le jeu
+        Game2048() # Lance le jeu 
 
 
 class Game2048:
@@ -45,12 +45,10 @@ class Game2048:
         self.racine.title("2048")
         self.racine.resizable(False, False)
         self.grid = [[0] * canvas_grid for _ in range(canvas_grid)]
-        self.init_ui()
-        self.cree_block()
-        self.cree_block()
-        self.racine.bind("<Key>", self.touches)
-        self.interface()
-        self.charger_progression()        # tente de charger une sauvegarde
+        self.init_ui() # initialise l'interface
+        self.charger_progression() # Charge une sauvegarde 
+        self.interface()  # dessine la grille
+        self.racine.bind("<Key>", self.touches) # Lie les touches 
         self.racine.mainloop()
 
     def init_ui(self):
@@ -68,17 +66,16 @@ class Game2048:
         quitter_btn = tk.Button(bouton_frame, text="Quitter", command=self.racine.destroy, bg="red", fg="white")
         quitter_btn.pack(side=tk.LEFT, padx=5)
 
-        # Bouton Sauvegarder
-         sauvegarder_btn = tk.Button(bouton_frame, text="Sauvegarder", command=self.sauvegarder, bg="#2196F3", fg="white")
-         sauvegarder_btn.pack(side=tk.LEFT, padx=5)
+        sauvegarder_btn = tk.Button(bouton_frame, text="Sauvegarder", command=self.sauvegarder, bg="#2196F3", fg="white")
+        sauvegarder_btn.pack(side=tk.LEFT, padx=5)
 
-    def cree_block(self):
+    def cree_block(self): # Ajoute un nouveau block (2 ou 4) à un emplacement vide
         case_vide = [(i, j) for i in range(canvas_grid) for j in range(canvas_grid) if self.grid[i][j] == 0]
         if case_vide:
             i, j = random.choice(case_vide)
             self.grid[i][j] = 2 if random.random() < 0.9 else 4
 
-    def interface(self):
+    def interface(self): # Met à jour l'affichage du plateau
         self.canvas.delete("all")
         for i in range(canvas_grid):
             for j in range(canvas_grid):
@@ -91,7 +88,7 @@ class Game2048:
                     texte_color = couleur_texte.get(value, "#F9F6F2")
                     self.canvas.create_text((x0 + x1) / 2, (y0 + y1) / 2, text=str(value), font=("Arial", 24, "bold"), fill=texte_color)
 
-    def touches(self, event):
+    def touches(self, event): # Gère les déplacements selon la touche pressée
         if event.keysym in ("Up", "Down", "Left", "Right"):
             moved = self.deplacement(event.keysym)
             if moved:
@@ -100,7 +97,7 @@ class Game2048:
                 if self.check_game_over():
                     self.game_over()
 
-    def deplacement(self, direction):
+    def deplacement(self, direction): #  Déplace et fusionne les blocks selon la direction
         def compress(row):
             new_row = [v for v in row if v != 0]
             new_row += [0] * (canvas_grid - len(new_row))
@@ -136,9 +133,9 @@ class Game2048:
             self.grid = [list(x) for x in zip(*self.grid)]
 
         return moved
-        
+
     def sauvegarder(self):
-    """Sauvegarde la grille dans un fichier JSON"""
+        """Sauvegarde la grille """
         try:
             with open("sauvegarde.json", "w") as f:
                 json.dump(self.grid, f)
@@ -147,19 +144,18 @@ class Game2048:
             print(f"Erreur de la sauvegarde : {e}")
 
     def charger_progression(self):
-    """Charge la grille sauvegardée, ou  initialise une nouvelle grille"""
+        """Charge la grille sauvegardée, ou en crée une nouvelle"""
         try:
             with open("sauvegarde.json", "r") as f:
                 self.grid = json.load(f)
                 print("Grille chargée")
-       except FileNotFoundError:
-           print("Sauvegarde introuvable. Nouvelle partie lancée.")
-           self.grid = [[0] * canvas_grid for _ in range(canvas_grid)]
-           self.cree_block()
-           self.cree_block()
+        except FileNotFoundError:
+            print("Sauvegarde introuvable. Nouvelle partie lancée.")
+            self.grid = [[0] * canvas_grid for _ in range(canvas_grid)]
+            self.cree_block()
+            self.cree_block()
 
-
-    def check_game_over(self):
+    def check_game_over(self): # Vérifie si le jeu est terminé
         for row in self.grid:
             if 0 in row:
                 return False
@@ -173,7 +169,7 @@ class Game2048:
                     return False
         return True
 
-    def game_over(self):
+    def game_over(self): # Affiche un message de fin de partie
         self.canvas.create_text(
             canvas_grid * case_taille / 2,
             canvas_grid * case_taille / 2,
